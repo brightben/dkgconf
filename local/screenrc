@@ -1,0 +1,80 @@
+# Title:        screenrc file
+# Author:       darkgerm
+
+# ==================== Status Line ===================={{{1
+
+# examples
+#caption always "%{=u .G} %-w%<%{=ub .y}%n %t%{=u .G}%+w "
+#hardstatus alwayslastline "%{= .K} [%l]%<%=%{= .W}@%H %e %=%{= .y}%Y/%m/%d%{= .m} %C %A"
+
+#caption always "%{= wk} %{= KY} [%n]%t @ %H %{-} %= %{= KR} %l %{-} | %{= KG} %Y-%m-%d %{-} "
+#hardstatus alwayslastline " %-Lw%{= Bw}%n%f %t%{-}%+Lw %=| %0c:%s "
+
+
+#backtick 1 0 0 echo $LESS  # use this with %1`
+hardstatus alwaysignore
+caption always "%{=u bw} %-w%{=ub kG} %n %t %{-}%+w %= %{= KR} %l %{-} %{= KC} %m/%d %c %{-} %{= KY} %H $STY %{-} "
+#every time you want to 'make a block', use %=
+# {<attribute> <modifier>}
+#
+# attribute:
+#   =   clear all before
+#   -   remove the set from the current attributes. (rollback to last one)
+#   u   underline
+#   b   bold
+#
+# modifier:  <background><text>  capitalized means bright
+#   k   black
+#   r   red
+#   g   green
+#   y   yellow
+#   b   blue
+#   m   magenta
+#   c   cyan
+#   w   white
+
+# set STY when create a new screen to enable $STY feature.
+# ex: sc() { STY=$1 screen -S $1 ; }
+
+
+# ==================== Settings ===================={{{1
+
+# `bind` need prefix key, while `bindkey` doesn't
+bindkey \033[D prev     # for putty/mac iTerm ctrl+arrow
+bindkey \033[C next
+bindkey ^[b prev        # for mac terminal ctrl+arrow
+bindkey ^[f next
+bindkey ^[[5D prev      # for mac terminal alt+arrow
+bindkey ^[[5C next
+bindkey \033[1;9D prev  # for mac iTerm alt+arrow
+bindkey \033[1;9C next
+bindkey \033[1;5D prev  # for cygwin terminal ctrl+arrow
+bindkey \033[1;5C next
+
+escape ^Aa          # use "^a a" to insert ^A to the shell
+#bind ^I             # unbind the `focus` key (rebind when split window)
+
+
+defutf8 on
+defencoding utf8
+bind b encoding big5 utf8
+bind u encoding utf8 utf8
+
+# ssh ProxyCommand need this. Please make a soft link if path is not right.
+shell /bin/bash
+
+defc1 off
+defflow on
+vbell off
+startup_message off
+defbce on       # erase background with current bg color
+shelltitle '% |-'
+defscrollback 10000
+#cjkwidth off
+
+
+# ==================== Non-use Settings Backup  ===================={{{1
+# Colours
+#termcapinfo xterm "Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm"
+#term xterm
+

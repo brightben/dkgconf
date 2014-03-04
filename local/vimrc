@@ -1,0 +1,206 @@
+" Title:        vimrc file
+" Author:       darkgerm
+
+" TODO: highlight of wildmenu
+" TODO: clean up the plugins
+
+let mapleader = ","
+
+" ==================== general setup ===================={{{1
+set nocompatible    "nocp
+" On some system we can't create .vimrc, so I set it manually.
+
+syntax on
+set number          "nu
+set shiftwidth=4    "sw
+set tabstop=4       "ts
+set expandtab       "et
+set softtabstop=4   "sts
+set backspace=2     "bs
+set autoindent      "ai
+" minimal setting:
+" set nocp nu sw=4 ts=4 et sts=4 bs=2 ai
+
+set nobackup
+set colorcolumn=80  "cc
+set scrolloff=5     "so
+set cursorline      "cul
+set wildmenu        "wmnu
+"set listchars=tab:>-    "lcs
+set listchars=tab:►-
+set list
+
+set background=dark
+highlight Comment ctermfg=Blue
+
+set hlsearch
+highlight Search cterm=none ctermbg=Blue ctermfg=LightCyan
+
+
+" Makefile need to use Tab
+au! BufNewFile,BufRead Makefile set noexpandtab
+
+
+" always jump to the last known position.
+" don't jump if the position is invalid.
+autocmd BufReadPost *
+    \ if line("'\"") > 1 && line("'\"") <= line("$") |
+    \   exe "normal! g`\"" |
+    \ endif
+
+" ==================== Encodings ===================={{{1
+set encoding=UTF-8
+set fileencoding=utf-8
+language message en_US.UTF-8
+set ambiwidth=double
+set fileencodings=ucs-bom,utf-8,big5,cp936,euc-jp,euc-kr,latin1
+
+set fileformat=unix
+set fileformats=unix,dos
+
+
+" ==================== status line ===================={{{1
+set laststatus=2            "laststatus: show the line below
+set statusline=%4*%<\ %1*[%F]
+set statusline+=%4*\ %5*[%{&fileencoding},  "encoding
+set statusline+=%{&fileformat}]%m           "file format
+set statusline+=%4*%=\ %6*%y%4*\ %3*%l%4*,\ %3*%c%4*\ \<\ %2*%P%4*\ \>
+highlight User1 ctermfg=red
+highlight User2 term=underline cterm=underline ctermfg=green
+highlight User3 term=underline cterm=underline ctermfg=yellow
+highlight User4 term=underline cterm=underline ctermfg=white
+highlight User5 ctermfg=cyan
+highlight User6 ctermfg=white
+
+
+" ==================== mapping ===================={{{1
+" tab switch
+map <F5> gT
+imap <F5> <ESC>gT
+map <F6> gt
+imap <F6> <ESC>gt
+
+" remain the trailing space
+imap <CR> <CR>x<BS>
+map o ox<BS>
+map O Ox<BS>
+
+" convience
+map <C-j> 10j
+map <C-k> 10k
+map <C-h> 10h
+map <C-l> 10l
+imap {<CR> {<CR><END><CR>}<UP><TAB><END>
+
+"inoremap (  ()<Left>
+"inoremap )  )<Esc>
+"            \y2l
+"            \:if '))'=="<C-R>=escape(@0,'"\')<CR>"<BAR>
+"            \  exec 'normal x'<BAR>
+"            \endif<CR>
+"            \a
+"
+"inoremap [  []<Left>
+"inoremap ]  ]<Esc>
+"            \y2l
+"            \:if ']]'=="<C-R>=escape(@0,'"\')<CR>"<BAR>
+"            \  exec 'normal x'<BAR>
+"            \endif<CR>
+"            \a
+
+" ==================== auto compile ===================={{{1
+function! HasError(qflist)
+    for i in a:qflist
+        if i.valid == 1
+            return 1
+        endif
+    endfor
+    return 0
+endfunction
+
+"how to get filename :help expand()
+function! MakeAndRun()
+    make "%:r"
+    if HasError( getqflist() )
+        cl
+    else
+        !mv "%:r" a.out
+        !./a.out
+    endif
+endfunction
+
+" No use now...
+
+"map <F9> :w<CR>:call MakeAndRun()<CR>
+"imap <F9> <ESC><F9>
+"map <F4> :cl<CR>
+"imap <F4> <ESC><F4>
+"map <F5> :cn<CR><F4>
+"imap <F5> <ESC><F5>
+"map <F6> :cp<CR><F4>
+"imap <F6> <ESC><F6>
+
+
+
+" ==================== folding ===================={{{1
+let v:folddashes = ' '
+set foldtext=MyFoldText()
+function! MyFoldText()
+    let title = getline(v:foldstart)                "get text on first line
+    let line = v:foldend-v:foldstart                "get line number
+    
+    let align = 79 - strlen(title) - strlen(line) - 6   " ' lines'
+    
+    return title.  repeat('_',align). line. " lines". repeat(' ',100)
+    
+    
+    "let v:folddashes = ' '     " don't know why doens't work
+    
+    "return title . "        " . line . " lines  "
+endfunction
+
+set foldmethod=marker
+
+
+" ==================== GUI relative ===================={{{1
+" gvim only use on windows
+if has("gui_running")
+    colorscheme torte
+    set guifont=Lucida\ Console:h11
+    set guioptions-=T           " remove the toolbar
+    set guioptions-=m           " remove the menu bar
+    set guioptions-=e           " use non-GUI tabli
+    set encoding=cp950          " let the menu bar display correctly
+    
+    map <F10> :call ShowMenuBar()<CR>
+endif
+
+function! ShowMenuBar()
+    if stridx(&guioptions, 'm') == -1
+        set guioptions+=m
+    else
+        set guioptions-=m
+    endif
+endfunction
+
+
+
+" ==================== VIM Bundle ===================={{{1
+filetype off                   " required!
+
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+" let Vundle manage Vundle
+" required! 
+Bundle 'gmarik/vundle'
+Bundle 'surround.vim'
+Bundle 'repeat.vim'
+Bundle 'https://github.com/msanders/snipmate.vim'
+Bundle 'clang-complete'
+"Bundle 'Python-mode-klen'
+
+filetype plugin indent on     " required!
+
+filetype plugin on
+
