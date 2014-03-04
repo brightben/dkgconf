@@ -38,7 +38,6 @@ atexit.register(save_history)
 
 
 # If ~/.pylocal.py exist, source it.
-rclevel = 9
 pylocal_path = os.path.expanduser("~/.pylocal.py")
 if os.path.exists(pylocal_path):
     print("exec '.pylocal.py'  ...")
