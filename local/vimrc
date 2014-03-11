@@ -38,7 +38,7 @@ highlight Search cterm=none ctermbg=Blue ctermfg=LightCyan
 
 
 " Makefile need to use Tab
-au! BufNewFile,BufRead Makefile set noexpandtab
+autocmd! BufNewFile,BufRead Makefile set noexpandtab
 
 
 " always jump to the last known position.
@@ -47,6 +47,12 @@ autocmd BufReadPost *
     \ if line("'\"") > 1 && line("'\"") <= line("$") |
     \   exe "normal! g`\"" |
     \ endif
+
+
+" spell on if writing commit msg.
+autocmd BufNewFile,BufRead COMMIT_EDITMSG setlocal spell
+"autocmd FileType markdown setlocal spell
+
 
 " ==================== Encodings ===================={{{1
 set encoding=UTF-8
@@ -81,16 +87,16 @@ map <F6> gt
 imap <F6> <ESC>gt
 
 " remain the trailing space
-imap <CR> <CR>x<BS>
-map o ox<BS>
-map O Ox<BS>
+"imap <CR> <CR>x<BS>
+"map o ox<BS>
+"map O Ox<BS>
 
 " convience
 map <C-j> 10j
 map <C-k> 10k
 map <C-h> 10h
 map <C-l> 10l
-imap {<CR> {<CR><END><CR>}<UP><TAB><END>
+imap {<CR> {<CR>}<ESC><UP>o
 
 "inoremap (  ()<Left>
 "inoremap )  )<Esc>
@@ -186,6 +192,7 @@ endfunction
 
 
 " ==================== VIM Bundle ===================={{{1
+" If you don't have VimBundle installed, please comment out this section.
 filetype off                   " required!
 
 set rtp+=~/.vim/bundle/vundle/
