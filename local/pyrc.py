@@ -91,3 +91,27 @@ def openurl(url, params={}, method="GET"):
     else:
         return urlopen(url + "?" + urlencode(params))
 
+
+def S(cmd, input=None, **kwargs):
+    """Shortcut for subprocess.Popen
+    cmd: list or str
+    input: str or bytes
+    **kwargs: same as subprocess.Popen
+    return value: str of stdout and stderr
+    """
+    if isinstance(cmd, str):
+        cmd = shlex.split(cmd)
+
+    # ensure input is bytes
+    if not isinstance(input, bytes):
+        input = input.encode()
+
+    out = subprocess.Popen(
+        cmd,
+        stdin = subprocess.PIPE,
+        stdout = subprocess.PIPE,
+        stderr = subprocess.PIPE,
+        **kwargs
+    ).communicate(input=input)
+    return (out[0] + out[1]).decode()
+
