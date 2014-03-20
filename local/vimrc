@@ -210,4 +210,9 @@ Bundle 'clang-complete'
 filetype plugin indent on     " required!
 
 filetype plugin on
+set omnifunc=syntaxcomplete#Complete
+
+" }}}1
+
+set paste
 
