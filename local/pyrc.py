@@ -93,25 +93,31 @@ def openurl(url, params={}, method="GET"):
 
 
 def S(cmd, input=None, **kwargs):
-    """Shortcut for subprocess.Popen
+    """Shortcut for subprocess.Popen. Intent to simulate backquote.
     cmd: list or str
     input: str or bytes
     **kwargs: same as subprocess.Popen
     return value: str of stdout and stderr
     """
-    if isinstance(cmd, str):
-        cmd = shlex.split(cmd)
-
-    # ensure input is bytes
-    if not isinstance(input, bytes):
-        input = input.encode()
-
-    out = subprocess.Popen(
-        cmd,
+    # default arguments
+    popen_args = dict(
         stdin = subprocess.PIPE,
         stdout = subprocess.PIPE,
         stderr = subprocess.PIPE,
-        **kwargs
-    ).communicate(input=input)
-    return (out[0] + out[1]).decode()
+    )
+    popen_args.update(kwargs)   # override by kwargs
+
+    # force shell=True if cmd is str
+    if isinstance(cmd, str):
+        popen_args.update({'shell': True})
+
+    # ensure input is bytes
+    if input and not isinstance(input, bytes):
+        input = input.encode()
+    else:
+        popen_args.update({'stdin': None})
+
+    out = subprocess.Popen(cmd, **popen_args).communicate(input=input)
+    ret = (out[0] if out[0] else b'') + (out[1] if out[1] else b'')
+    return ret.decode()
 
