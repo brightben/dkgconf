@@ -85,6 +85,7 @@ alias ls='ls -GF'
 alias rsync='rsync -avP'   # --del is too dangerous  -z compress
 alias ipcat='ypcat hosts | sort -t. -n -k1,1 -k2,2 -k3,3 -k4,4'
 alias pg='ps aux | grep'
+alias wget='wget --no-check-certificate'
 
 # short cut
 alias ll='ls -al'
@@ -247,6 +248,8 @@ _freeBSD_setup() {
     export PATH+=':/usr/local/bin:/usr/local/sbin'
     export PATH+=':/usr/bin:/usr/sbin'
     export PATH+=':/bin:/sbin'
+    alias pkgsearch='pkg search -Q comment'
+    pkgversion() { [ -z "$1" ] && pkg version -v || pkg version -v -x $1 ; }
 }
 
 _darwin_setup() {
@@ -274,6 +277,7 @@ _cygwin_setup() {
     alias mosh="mosh --server='mosh-server new -l LANG=en_US.UTF-8'"
     alias ls='ls -GF --color=always'
     alias ifconfig='ipconfig | iconv -f big5'
+    alias open='cygstart'
     
     # use the system python
     alias python=_cygwin_python
@@ -307,6 +311,8 @@ case `uname -s` in
         echo 'WARNING: unknown operating system: '`uname -s`
         ;;
 esac
+
+# }}}
 
 if [ -f ~/.bashlocal ]; then
     echo 'exec .bashlocal ...'
