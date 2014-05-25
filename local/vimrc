@@ -6,6 +6,8 @@
 
 let mapleader = ","
 
+"set dir=/tmp
+
 " ==================== general setup ===================={{{1
 set nocompatible    "nocp
 " On some system we can't create .vimrc, so I set it manually.
@@ -36,11 +38,6 @@ highlight Comment ctermfg=Blue
 set hlsearch
 highlight Search cterm=none ctermbg=Blue ctermfg=LightCyan
 
-
-" Makefile need to use Tab
-autocmd! BufNewFile,BufRead Makefile set noexpandtab
-
-
 " always jump to the last known position.
 " don't jump if the position is invalid.
 autocmd BufReadPost *
@@ -49,9 +46,13 @@ autocmd BufReadPost *
     \ endif
 
 
+" Makefile need to use Tab
+autocmd! BufNewFile,BufRead Makefile setlocal noexpandtab
+
 " spell on if writing commit msg.
 autocmd BufNewFile,BufRead COMMIT_EDITMSG setlocal spell
-"autocmd FileType markdown setlocal spell
+autocmd BufNewFile,BufRead *.rst setlocal spell
+autocmd FileType markdown setlocal spell
 
 
 " ==================== Encodings ===================={{{1
@@ -86,11 +87,6 @@ imap <F5> <ESC>gT
 map <F6> gt
 imap <F6> <ESC>gt
 
-" remain the trailing space
-"imap <CR> <CR>x<BS>
-"map o ox<BS>
-"map O Ox<BS>
-
 " convience
 map <C-j> 10j
 map <C-k> 10k
@@ -115,37 +111,35 @@ imap {<CR> {<CR>}<ESC><UP>o
 "            \a
 
 " ==================== auto compile ===================={{{1
-function! HasError(qflist)
-    for i in a:qflist
-        if i.valid == 1
-            return 1
-        endif
-    endfor
-    return 0
-endfunction
-
-"how to get filename :help expand()
-function! MakeAndRun()
-    make "%:r"
-    if HasError( getqflist() )
-        cl
-    else
-        !mv "%:r" a.out
-        !./a.out
-    endif
-endfunction
-
 " No use now...
-
-"map <F9> :w<CR>:call MakeAndRun()<CR>
-"imap <F9> <ESC><F9>
-"map <F4> :cl<CR>
-"imap <F4> <ESC><F4>
-"map <F5> :cn<CR><F4>
-"imap <F5> <ESC><F5>
-"map <F6> :cp<CR><F4>
-"imap <F6> <ESC><F6>
-
+" function! HasError(qflist)
+"     for i in a:qflist
+"         if i.valid == 1
+"             return 1
+"         endif
+"     endfor
+"     return 0
+" endfunction
+" 
+" "how to get filename :help expand()
+" function! MakeAndRun()
+"     make "%:r"
+"     if HasError( getqflist() )
+"         cl
+"     else
+"         !mv "%:r" a.out
+"         !./a.out
+"     endif
+" endfunction
+" 
+" map <F9> :w<CR>:call MakeAndRun()<CR>
+" imap <F9> <ESC><F9>
+" map <F4> :cl<CR>
+" imap <F4> <ESC><F4>
+" map <F5> :cn<CR><F4>
+" imap <F5> <ESC><F5>
+" map <F6> :cp<CR><F4>
+" imap <F6> <ESC><F6>
 
 
 " ==================== folding ===================={{{1
