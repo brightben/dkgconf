@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+"""Multithread http server."""
+import argparse
+import http.server
+from socketserver import ThreadingMixIn
+
+class MultiThreadedHTTPServer(ThreadingMixIn, http.server.HTTPServer):
+    pass
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--cgi', action='store_true',
+                       help='Run as CGI Server')
+    parser.add_argument('port', action='store',
+                        default=8000, type=int,
+                        nargs='?',
+                        help='Specify alternate port [default: 8000]')
+    args = parser.parse_args()
+    if args.cgi:
+        #http.server.test(HandlerClass=CGIHTTPRequestHandler, port=args.port)
+        print('not support')
+    else:
+        http.server.test(
+            HandlerClass = http.server.SimpleHTTPRequestHandler,
+            ServerClass = MultiThreadedHTTPServer,
+            port=args.port
+        )
+

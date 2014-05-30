@@ -1,0 +1,21 @@
+#!/bin/sh
+
+showpid() {
+    _pid=$1
+    _ppid=`ps -p $_pid -o ppid=`
+    _command=`ps -p $_pid -o command=`
+    printf "%s\t%s\t%s\n" "$_ppid" "$_pid" "$_command"
+}
+
+main() {
+    ppid=$1
+    
+    printf "PPID\tPID\tCOMMAND\n"
+    while [ $ppid -ne 0 ]; do
+        showpid $ppid
+        ppid=`ps -p $ppid -o ppid=`
+    done
+}
+
+main "$@"
+

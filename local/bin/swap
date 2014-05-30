@@ -1,0 +1,9 @@
+#!/bin/sh
+if [ -z "$1" ] || [ -z "$2" ]; then
+    echo "Usage: $0 <file1> <file2>"
+    exit 1
+fi
+TMPFILE=/tmp/swaptmp.$$
+mv "$1" "$TMPFILE"
+mv "$2" "$1"
+mv "$TMPFILE" "$2"

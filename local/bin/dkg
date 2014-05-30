@@ -1,0 +1,114 @@
+#!/bin/sh
+
+# dkg utility
+#
+# add the following to .bashrc to enable completion.
+#
+#   _dkg() {
+#       COMPREPLY=( $( compgen -W 'allow rregist help sync' -- "$2" ) )
+#   }
+#   complete -F _dkg dkg
+
+# TODO: 'regist' command has some bugs in path.
+
+PUBKEY_DIR=~/.ssh/pubkey
+
+
+_help() {
+    cat <<EOF
+Usage:
+    dkg help                Show this help.
+    dkg sync                Sync dkgconf.
+    
+ssh relative:
+    dkg allow [host ...]    Allow host to ssh in without password.
+                            (Get host's public key.)
+                            
+    dkg regist [host ...]   Regist to ssh to host without password.
+                            (Push public key to host.)
+                            
+    dkg keysync             Generate .ssh/authorized_keys with ~/.ssh/pubkey.
+EOF
+}
+
+_print() {
+    # print func for dkg. [TODO] add color support.
+    echo "[dkg] $1"
+}
+
+_sync() {
+    rsync -avP --del --no-owner --no-group delta:dkgconf ~
+}
+
+
+
+_keysync() {
+    cat $PUBKEY_DIR/* > $PUBKEY_DIR/../authorized_keys
+    _print 'you allows the following host to ssh in without password:'
+    ls $PUBKEY_DIR | awk -F '_' '{print $1}'
+}
+
+_allow() {
+    if [ -z "$1" ]; then
+        return
+    else
+        _print "fetch $1 public key..."
+        mkdir -p $PUBKEY_DIR
+        
+        scp  $1:~/.ssh/id_rsa.pub  $PUBKEY_DIR/$1_rsa.pub
+        if [ $? != 0 ]; then
+            _print "So sad... $1 don't have public key. :("
+            _print "But you can generate one now. ;)"
+            ssh $1 ssh-keygen -t rsa
+            _print "Ok. Let fetch it again. Please enter password again. Plzzz."
+            scp  $1:~/.ssh/id_rsa.pub  $PUBKEY_DIR/$1_rsa.pub
+        fi
+        
+        _keysync
+    fi
+    
+    # recursive
+    shift; _allow "$@"
+}
+
+_regist() {
+    if [ -z "$1" ]; then
+        _print "done!!"
+        return
+    else
+        mkdir -p $PUBKEY_DIR
+        if [ -f ~/.ssh/id_rsa.pub ]; then
+            _print "checking id_rsa.pub ... [   OK  ]"
+        else
+            _print "checking id_rsa.pub ... [ ERROR ]"
+            _print "You can generate it now. :)"
+            ssh-keygen -t rsa
+        fi
+        _print "push key to $1..."
+        _print "You need to type password twice."
+        scp  ~/.ssh/id_rsa.pub  $1:$PUBKEY_DIR/`hostname`_rsa.pub       # TODO: what if $1 don't have .ssh ?
+        ssh  $1  "cat ~/.ssh/`hostname`_rsa.pub >> ~/.ssh/authorized_keys"
+    fi
+    
+    # recursive
+    shift; _regist "$@"
+}
+
+main() {
+    case "$1" in
+        "help")     _help ;;
+        "sync")     _sync ;;
+        
+        "allow")    shift; _allow "$@";;
+        "regist")   shift; _regist "$@";;
+        "keysync")  shift; _keysync "$@";;
+        
+        *)
+            _print 'Unknown command'
+            _help
+        ;;
+    esac
+}
+
+main "$@"
+

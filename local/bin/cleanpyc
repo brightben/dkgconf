@@ -1,0 +1,4 @@
+#!/bin/sh
+echo 'cleaning *.pyc and __pycache__ ...'
+find . -name __pycache__ -exec rm -rf {} \;
+find . -name '*.pyc' -delete

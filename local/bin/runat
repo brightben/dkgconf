@@ -1,0 +1,95 @@
+#!/usr/bin/env python
+"""
+2014.05.30
+    Actually, crontab can do what this tool can do.
+    I haven't use this tool for long time.
+"""
+
+from datetime import datetime
+import sys
+import os
+import re
+import time
+
+man = '''\
+NAME
+    runat - run command at specify time.
+
+SYNOPSIS
+    runat time command...
+
+DESCRIPTION
+
+    The argument should be in the form [[yy]mmdd]HHMM[.SS] where each pair of
+    letters represents the following:
+
+        yy      The second two digits of the year.
+        mm      The month of the year, from 1 to 12.
+        dd      the day of the month, from 1 to 31.
+        HH      The hour of the day, from 0 to 23.
+        MM      The minute of the hour, from 0 to 59.
+        SS      The second of the minute, from 0 to 61.
+
+    If the yy and mm and dd letter pairs are not specified, the values default
+    to the current date.  If the SS letter pair is not specified, the value
+    defaults to 0.
+
+AUTHORS
+    darkgerm <darkgerm@gmail.com>
+'''
+
+usage = '''\
+runat time command...
+time should be in the form [[yy]mmdd]HHMM[.SS]
+'''
+
+
+def main():
+    if sys.argv[1] == '-h':
+        print man
+        return
+    if len(sys.argv) < 2:
+        print usage
+        return
+    
+    cmd = sys.argv[2]
+    for arg in sys.argv[3:]:
+        if   "'" in arg and '"' in arg:
+            cmd += ' "' + arg.replace('"', '\\"') + '"'
+        elif "'" in arg:
+            cmd += ' "' + arg + '"'
+        elif '"' in arg:
+            cmd += " '" + arg + "'"
+        elif ' ' in arg:
+            cmd += " '" + arg + "'"
+        else:
+            cmd += ' ' + arg
+        
+    # parse the time format
+    pattern  = '^'
+    pattern += '('                                  # [
+    pattern +=   '(?P<year>\d\d)?'                  #   [yy]
+    pattern +=   '(?P<month>\d\d)(?P<day>\d\d)'     #   mmdd
+    pattern += ')?'                                 # ]
+    pattern += '(?P<hour>\d\d)(?P<minute>\d\d)'     # HHMM
+    pattern += '(\.(?P<second>\d\d))?'              # [.SS]
+    pattern += '$'
+    intime = re.search(pattern, sys.argv[1]).groupdict()
+    intime = {k:int(v) for k,v in intime.items() if v}   # delete None
+    
+    intime = datetime.today().replace(second=0).replace(**intime)
+    
+    delta_time = intime - datetime.today()
+    delta_sec = delta_time.total_seconds()
+
+    print 'The following cmd will be executed at %s (after %d seconds)'%\
+            (intime.strftime('%m/%d %H:%M:%S'), delta_sec)
+    print '`%s`'%(cmd,)
+
+    time.sleep(delta_sec)
+    os.system(cmd)
+    
+
+
+if __name__=='__main__': main()
+
