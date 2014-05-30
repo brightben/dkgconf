@@ -1,0 +1,32 @@
+[user]
+    name = 
+    email = 
+    
+[alias]
+    ci = commit
+    st = status
+    co = checkout
+    up = checkout
+    lg = log --graph
+
+# usege: git clone git://host.name/.git name
+    serve = daemon \
+            --reuseaddr \
+            --verbose \
+            --base-path=. \
+            --export-all \
+            ./.git
+            
+# if you want to enble push, you should set receive.denyCurrentBranch
+# git config receive.denyCurrentBranch ignore
+    upserve = daemon \
+            --reuseaddr \
+            --verbose \
+            --base-path=. \
+            --export-all \
+            --enable=receive-pack \
+            ./.git
+    
+[color]
+    ui = true
+    
