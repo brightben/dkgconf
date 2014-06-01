@@ -43,10 +43,10 @@ bind 'C-x:insert-comment'
 # completion
 if [ -f /usr/local/share/bash-completion/bash_completion.sh ]; then
     source /usr/local/share/bash-completion/bash_completion.sh
-    
+
     # do not compelet rsync. rsync is a little bit weird 0.o
     complete -o default rsync
-    
+
 else
     # simple completion
     complete -cf sudo
@@ -155,14 +155,14 @@ set_prompt () {
     C='\e[0;36m'; LC='\e[1;36m'   # Cyan
     W='\e[0;37m'; LW='\e[1;37m'   # White
     # on the line your cursor is, the color should be surrounded by \[ \].
-    
+
     NAME=`whoami`
     if [ "$NAME" == "root" ]; then
         NAME_COLOR=$LR
     else
         NAME_COLOR=$LY
     fi
-    
+
     if [ "$1" == "2" ]; then
         PS1=''
         PS1+='┌─'$LC'[\A]'              # date time
@@ -215,7 +215,7 @@ findtext() {
         op=''
         shift
     fi
-    
+
     find . -exec grep --color=always $op $1 {} \;
 }
 
@@ -228,7 +228,7 @@ findtext() {
 tohtml() {
     if [ "$1" == "" ]; then
         echo 'usage: tohtml input [output]'
-        
+
     elif [ "$2" == "" ]; then
         vim -ne +TOhtml +wq! +qall! -- "$1" > /dev/null
     else
@@ -240,10 +240,6 @@ tohtml() {
 
 # ==================== System Dependant ===================={{{1
 _freeBSD_setup() {
-    #if [ -f /usr/local/share/autojump/autojump.bash ]; then
-    #    . /usr/local/share/autojump/autojump.bash
-    #fi
-    
     export PATH='~/bin'
     export PATH+=':/usr/local/bin:/usr/local/sbin'
     export PATH+=':/usr/bin:/usr/sbin'
@@ -253,23 +249,19 @@ _freeBSD_setup() {
 }
 
 _darwin_setup() {
-    
+
     export PATH='~/bin'
     export PATH+=':/usr/local/sbin:/usr/local/bin'
     export PATH+=':/sbin:/bin'
     export PATH+=':/usr/sbin:/usr/bin'
     #export PATH+=':/usr/local/share/python'
     #export PYTHONPATH="/usr/local/lib/python2.7/site-packages"
-    
-    # the autojump on Mac is too lag 0.0
-    #if [ -f /opt/local/etc/profile.d/autojump.sh ]; then
-    #    . /opt/local/etc/profile.d/autojump.sh
-    #fi
+
 }
 
 _linux_setup() {
     alias ls='ls -GF --color=always'
-    
+
     export PATH='~/bin:'$PATH
 }
 
@@ -278,13 +270,13 @@ _cygwin_setup() {
     alias ls='ls -GF --color=always'
     alias ifconfig='ipconfig | iconv -f big5'
     alias open='cygstart'
-    
+
     # use the system python
     alias python=_cygwin_python
     export PYTHONSTARTUP="C:\cygwin\home\darkgerm\dkgconf\local\pyrc.py"
-    
+
     export PATH='~/bin:/bin:/usr/bin:'$PATH
-    
+
     cd /cygdrive/d
 }
 

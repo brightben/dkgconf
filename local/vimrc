@@ -120,7 +120,7 @@ imap {<CR> {<CR>}<ESC><UP>o
 "     endfor
 "     return 0
 " endfunction
-" 
+"
 " "how to get filename :help expand()
 " function! MakeAndRun()
 "     make "%:r"
@@ -131,7 +131,7 @@ imap {<CR> {<CR>}<ESC><UP>o
 "         !./a.out
 "     endif
 " endfunction
-" 
+"
 " map <F9> :w<CR>:call MakeAndRun()<CR>
 " imap <F9> <ESC><F9>
 " map <F4> :cl<CR>
@@ -148,14 +148,14 @@ set foldtext=MyFoldText()
 function! MyFoldText()
     let title = getline(v:foldstart)                "get text on first line
     let line = v:foldend-v:foldstart                "get line number
-    
+
     let align = 79 - strlen(title) - strlen(line) - 6   " ' lines'
-    
+
     return title.  repeat('_',align). line. " lines". repeat(' ',100)
-    
-    
+
+
     "let v:folddashes = ' '     " don't know why doens't work
-    
+
     "return title . "        " . line . " lines  "
 endfunction
 
@@ -171,7 +171,7 @@ if has("gui_running")
     set guioptions-=m           " remove the menu bar
     set guioptions-=e           " use non-GUI tabli
     set encoding=cp950          " let the menu bar display correctly
-    
+
     map <F10> :call ShowMenuBar()<CR>
 endif
 
@@ -193,7 +193,7 @@ set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 
 " let Vundle manage Vundle
-" required! 
+" required!
 Bundle 'gmarik/vundle'
 Bundle 'surround.vim'
 Bundle 'repeat.vim'
