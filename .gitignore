@@ -1,0 +1,5 @@
+# vim tmp files.
+*.swp
+
+# has sensitive settings, only commit *.template version.
+local/gitconfig
