@@ -249,7 +249,6 @@ _freeBSD_setup() {
 }
 
 _darwin_setup() {
-
     export PATH='~/bin'
     export PATH+=':/usr/local/sbin:/usr/local/bin'
     export PATH+=':/sbin:/bin'
@@ -257,6 +256,20 @@ _darwin_setup() {
     #export PATH+=':/usr/local/share/python'
     #export PYTHONPATH="/usr/local/lib/python2.7/site-packages"
 
+    vpy_enable() {
+        echo 'Restore /Library/Frameworks/Python.framework ...'
+        cd /Library/Frameworks && sudo mv Python.framework.bak Python.framework
+    }
+    vpy_disable() {
+        echo 'Backup /Library/Frameworks/Python.framework ...'
+        cd /Library/Frameworks && sudo mv Python.framework Python.framework.bak
+    }
+    vpy() {
+        echo
+        echo ' *** This is /Library/Frameworks/Python.framework/Versions/2.7/bin/python ***'
+        echo
+        /Library/Frameworks/Python.framework/Versions/2.7/bin/python "$@"
+    }
 }
 
 _linux_setup() {
