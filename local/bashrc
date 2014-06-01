@@ -258,13 +258,21 @@ _darwin_setup() {
 
     vpy_enable() {
         echo 'Restore /Library/Frameworks/Python.framework ...'
-        cd /Library/Frameworks && sudo mv Python.framework.bak Python.framework
+        sudo mv \
+            /Library/Frameworks/Python.framework.bak \
+            /Library/Frameworks/Python.framework
     }
     vpy_disable() {
         echo 'Backup /Library/Frameworks/Python.framework ...'
-        cd /Library/Frameworks && sudo mv Python.framework Python.framework.bak
+        sudo mv \
+            /Library/Frameworks/Python.framework \
+            /Library/Frameworks/Python.framework.bak
     }
     vpy() {
+        if [ ! -f /Library/Frameworks/Python.framework/Versions/2.7/bin/python ]; then
+            echo 'Use vpy_enable first.'
+            return 1
+        fi
         echo
         echo ' *** This is /Library/Frameworks/Python.framework/Versions/2.7/bin/python ***'
         echo
