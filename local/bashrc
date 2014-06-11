@@ -291,6 +291,7 @@ _cygwin_setup() {
     alias ls='ls -GF --color=always'
     alias ifconfig='ipconfig | iconv -f big5'
     alias open='cygstart'
+    alias setup='/setup/setup-x86 --site http://mirror.cs.nctu.edu.tw/cygwin/ --quiet-mode --package-manager --no-shortcuts'
 
     # use the system python
     alias python=_cygwin_python
@@ -303,10 +304,10 @@ _cygwin_setup() {
 
 # $# is arg num
 # Syntax    Effective result
-#   $*      $1 $2 $3 … ${N}
-#   $@      $1 $2 $3 … ${N}
-#  "$*"     "$1c$2c$3c…c${N}"
-#  "$@"     "$1" "$2" "$3" … "${N}"
+#   $*      $1 $2 $3 ... ${N}
+#   $@      $1 $2 $3 ... ${N}
+#  "$*"     "$1c$2c$3c...c${N}"
+#  "$@"     "$1" "$2" "$3" ... "${N}"
 _cygwin_python() {
     pyarg='-u'
     if [ $# -eq 0 ]; then
