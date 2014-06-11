@@ -136,7 +136,7 @@ export PYTHONSTARTUP=~/.pyrc.py
 # ==================== PROMPT ===================={{{1
 
 __errno() {
-    errno=$?
+    local errno=$?
     if [ $errno -eq 0 ]; then
         echo -e "\e[1;32m"0
     else
@@ -145,22 +145,21 @@ __errno() {
 }
 
 set_prompt () {
-    E='\e[m'
-    D='\e[0;30m'; LD='\e[1;30m'   # Dark
-    R='\e[0;31m'; LR='\e[1;31m'   # Red
-    G='\e[0;32m'; LG='\e[1;32m'   # Green
-    Y='\e[0;33m'; LY='\e[1;33m'   # Yellow
-    B='\e[0;34m'; LB='\e[1;34m'   # Blue
-    M='\e[0;35m'; LM='\e[1;35m'   # Magenta
-    C='\e[0;36m'; LC='\e[1;36m'   # Cyan
-    W='\e[0;37m'; LW='\e[1;37m'   # White
+    local E='\e[m'
+    local D='\e[0;30m'; local LD='\e[1;30m'   # Dark
+    local R='\e[0;31m'; local LR='\e[1;31m'   # Red
+    local G='\e[0;32m'; local LG='\e[1;32m'   # Green
+    local Y='\e[0;33m'; local LY='\e[1;33m'   # Yellow
+    local B='\e[0;34m'; local LB='\e[1;34m'   # Blue
+    local M='\e[0;35m'; local LM='\e[1;35m'   # Magenta
+    local C='\e[0;36m'; local LC='\e[1;36m'   # Cyan
+    local W='\e[0;37m'; local LW='\e[1;37m'   # White
     # on the line your cursor is, the color should be surrounded by \[ \].
 
-    NAME=`whoami`
-    if [ "$NAME" == "root" ]; then
-        NAME_COLOR=$LR
+    if [ "$(whoami)" == "root" ]; then
+        local NAME_COLOR=$LR
     else
-        NAME_COLOR=$LY
+        local NAME_COLOR=$LY
     fi
 
     if [ "$1" == "2" ]; then
@@ -210,9 +209,9 @@ untar() {
 }
 
 findtext() {
-    op='-l'
+    local op='-l'
     if [ "$1" == "-t" ]; then   # print intext instead of filename
-        op=''
+        local op=''
         shift
     fi
 
@@ -316,13 +315,13 @@ _cygwin_python() {
     /cygdrive/c/Python27/python $pyarg "$@"
 }
 
-case `uname -s` in
+case "$(uname -s)" in
     FreeBSD)    _freeBSD_setup ;;
     Darwin)     _darwin_setup  ;;
     Linux)      _linux_setup   ;;
     CYGWIN_NT*) _cygwin_setup  ;;
     *)
-        echo 'WARNING: unknown operating system: '`uname -s`
+        echo 'WARNING: unknown operating system: '$(uname -s)
         ;;
 esac
 
