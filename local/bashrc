@@ -98,6 +98,7 @@ alias m='man'
 alias g='grep'
 alias bs2='ssh bbsu@ssh.bs2.to'
 alias ptt='ssh bbsu@ptt.cc'
+alias ptt2='ssh bbsu@ptt2.cc'
 
 alias sr='screen -rd'
 sc() { STY=$1 screen -S $1 ; }
@@ -144,6 +145,14 @@ __errno() {
     fi
 }
 
+__virtual_env() {
+    if [ -z "$VIRTUAL_ENV" ]; then
+        echo ''
+    else
+        echo "(`basename \"$VIRTUAL_ENV\"`) "
+    fi
+}
+
 set_prompt () {
     local E='\e[m'
     local D='\e[0;30m'; local LD='\e[1;30m'   # Dark
@@ -163,6 +172,7 @@ set_prompt () {
     fi
 
     if [ "$1" == "2" ]; then
+        export VIRTUAL_ENV_DISABLE_PROMPT=1
         PS1=''
         PS1+='┌─'$LC'[\A]'              # date time
         PS1+=$LW"-<$NAME_COLOR\u"       # user
@@ -170,9 +180,10 @@ set_prompt () {
         PS1+='$(__errno)'               # errno
         PS1+=$LM'$(__git_ps1)'          # git
         PS1+=$E'\n'                     # newline
-        PS1+='└─'\\[$LG\\]'[\w]'        # path
-        PS1+=\\[$LM\\]' >'\\[$E\\]
+        PS1+='└─'$LM'$(__virtual_env)'$LG'[\w]'        # path
+        PS1+=$LM' >'$E
     else
+        export VIRTUAL_ENV_DISABLE_PROMPT=
         PS1=''
         PS1+=\\[$LC\\]'\A'              # time
         PS1+=\\[$NAME_COLOR\\]'\u'      # user
