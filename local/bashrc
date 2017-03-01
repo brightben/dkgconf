@@ -171,6 +171,7 @@ set_prompt () {
         local NAME_COLOR=$LY
     fi
 
+    # The "\\[", "\\]" are needed or your cursor will at wrong position.
     if [ "$1" == "2" ]; then
         export VIRTUAL_ENV_DISABLE_PROMPT=1
         PS1=''
@@ -180,8 +181,8 @@ set_prompt () {
         PS1+='$(__errno)'               # errno
         PS1+=$LM'$(__git_ps1)'          # git
         PS1+=$E'\n'                     # newline
-        PS1+='└─'$LM'$(__virtual_env)'$LG'[\w]'        # path
-        PS1+=$LM' >'$E
+        PS1+='└─'\\[$LM\\]'$(__virtual_env)'\\[$LG\\]'[\w]'        # path
+        PS1+=\\[$LM\\]' >'\\[$E\\]
     else
         export VIRTUAL_ENV_DISABLE_PROMPT=
         PS1=''

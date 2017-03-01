@@ -3,3 +3,6 @@
 
 # has sensitive settings, only commit *.template version.
 local/gitconfig
+
+# Vundles should be installed from internet.
+local/vim/bundle
