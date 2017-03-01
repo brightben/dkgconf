@@ -37,6 +37,12 @@ def save_history(history_path=history_path):
 atexit.register(save_history)
 
 
+# Stop saving history feature. Use it if you want to test something sensitive.
+# Set atexit, save_history in arguments in order not to be deleted later.
+def stop_saving_history(atexit=atexit, save_history=save_history):
+    atexit.unregister(save_history)
+
+
 # If ~/.pylocal.py exist, source it.
 pylocal_path = os.path.expanduser("~/.pylocal.py")
 if os.path.exists(pylocal_path):
