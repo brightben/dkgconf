@@ -8,7 +8,7 @@ let mapleader = ","
 
 "set dir=/tmp
 
-" ==================== general setup ===================={{{1
+" ==================== General Setup ===================={{{1
 set nocompatible    "nocp
 " On some system we can't create .vimrc, so I set it manually.
 
@@ -46,15 +46,6 @@ autocmd BufReadPost *
     \ endif
 
 
-" Makefile need to use Tab
-autocmd! BufNewFile,BufRead Makefile setlocal noexpandtab
-
-" spell on if writing commit msg.
-autocmd BufNewFile,BufRead COMMIT_EDITMSG setlocal spell
-autocmd BufNewFile,BufRead *.rst setlocal spell
-autocmd FileType markdown setlocal spell
-
-
 " ==================== Encodings ===================={{{1
 set encoding=UTF-8
 set fileencoding=utf-8
@@ -66,7 +57,7 @@ set fileformat=unix
 set fileformats=unix,dos
 
 
-" ==================== status line ===================={{{1
+" ==================== Status Line ===================={{{1
 set laststatus=2            "laststatus: show the line below
 set statusline=%4*%<\ %1*[%F]
 set statusline+=%4*\ %5*[%{&fileencoding},  "encoding
@@ -80,12 +71,15 @@ highlight User5 ctermfg=cyan
 highlight User6 ctermfg=white
 
 
-" ==================== mapping ===================={{{1
+" ==================== Key Mapping ===================={{{1
 " tab switch
 map <F5> gT
 imap <F5> <ESC>gT
 map <F6> gt
 imap <F6> <ESC>gt
+
+map t gt
+map T gT
 
 " convience
 map <C-j> 10j
@@ -110,7 +104,7 @@ imap {<CR> {<CR>}<ESC><UP>o
 "            \endif<CR>
 "            \a
 
-" ==================== auto compile ===================={{{1
+" ==================== Auto Compile ===================={{{1
 " No use now...
 " function! HasError(qflist)
 "     for i in a:qflist
@@ -142,7 +136,7 @@ imap {<CR> {<CR>}<ESC><UP>o
 " imap <F6> <ESC><F6>
 
 
-" ==================== folding ===================={{{1
+" ==================== Folding ===================={{{1
 let v:folddashes = ' '
 set foldtext=MyFoldText()
 function! MyFoldText()
@@ -162,7 +156,7 @@ endfunction
 set foldmethod=marker
 
 
-" ==================== GUI relative ===================={{{1
+" ==================== GUI Relative ===================={{{1
 " gvim only use on windows
 if has("gui_running")
     colorscheme torte
@@ -185,28 +179,46 @@ endfunction
 
 
 
-" ==================== VIM Bundle ===================={{{1
-" If you don't have VimBundle installed, please comment out this section.
+" ==================== VIM Vundle ===================={{{1
+" To set up Vundle, run the command:
+"   git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+" If you don't want to use Vundle, please comment out this section.
 filetype off                   " required!
 
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
 
-" let Vundle manage Vundle
-" required!
-Bundle 'gmarik/vundle'
-Bundle 'surround.vim'
-Bundle 'repeat.vim'
-Bundle 'https://github.com/msanders/snipmate.vim'
-Bundle 'clang-complete'
-"Bundle 'Python-mode-klen'
+" let Vundle manage Vundle, required!
+Plugin 'VundleVim/Vundle.vim'
 
-filetype plugin indent on     " required!
+Plugin 'surround.vim'
+Plugin 'repeat.vim'
+"Plugin 'snipMate'
+"Plugin 'clang-complete'
 
-filetype plugin on
+call vundle#end()           " required!
+filetype plugin indent on   " required!
+" Brief help
+" " :PluginList       - lists configured plugins
+" " :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
+" " :PluginSearch foo - searches for foo; append `!` to refresh local cache
+" " :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+" "
+
 set omnifunc=syntaxcomplete#Complete
 
 " }}}1
+" ==================== Other Settings ====================
+au BufReadPost *.sls set syntax=yaml
+
+" Makefile need to use Tab
+autocmd! BufNewFile,BufRead Makefile setlocal noexpandtab
+
+" spell on if writing commit msg.
+autocmd BufNewFile,BufRead COMMIT_EDITMSG setlocal spell
+"autocmd BufNewFile,BufRead *.rst setlocal spell
+"autocmd FileType markdown setlocal spell
+
 
 set paste
 
