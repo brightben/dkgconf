@@ -55,17 +55,9 @@ def init():
     def stop_saving_history():
         atexit.unregister(save_history)
 
-    # If ~/.pylocal.py exist, source it.
-    pylocal_path = os.path.expanduser("~/.pylocal.py")
-    if os.path.exists(pylocal_path):
-        print("\033[1;32mexec '.pylocal.py'  ...\033[m")
-        if is_py2:
-            execfile(pylocal_path)
-        else:
-            exec(compile(open(pylocal_path).read(), pylocal_path, 'exec'))
+init()
+del init
 
-
-# Call init() later because .pylocal.py may want to use functions below.
 
 def try_import(mod_name, func=None, alias=None):
     ''' Helper function for you to write .pylocal.py
@@ -178,5 +170,16 @@ def S(cmd, input=None, **kwargs):
     return ret.decode()
 
 
-init()
-del init
+# If ~/.pylocal.py exist, source it.
+# This should be the last step because .pylocal.py may want to use functions
+# above.
+# This part cannot be put in init(), or Python2 will give you SyntaxError at
+# exec() even if Python2 never executes it...
+pylocal_path = os.path.expanduser("~/.pylocal.py")
+if os.path.exists(pylocal_path):
+    print("\033[1;32mexec '.pylocal.py'  ...\033[m")
+    if is_py2:
+        execfile(pylocal_path)
+    else:
+        exec(compile(open(pylocal_path).read(), pylocal_path, 'exec'))
+del pylocal_path
