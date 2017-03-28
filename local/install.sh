@@ -1,17 +1,13 @@
 #!/bin/sh
-echo 'The following files will be deleted.'
+echo 'The following files will be replaced.'
 ls -al \
     ~/.bashrc \
     ~/.gitconfig \
-    ~/.hgrc \
     ~/.screenrc \
-    ~/.tcshrc \
-    ~/.tmux.conf \
     ~/.vim \
     ~/.vimrc \
     ~/.pyrc.py \
     ~/bin \
-    ~/.ssh/config \
     
     
 while [ 1 ]; do
@@ -27,27 +23,29 @@ done
 
 rm -rf ~/.bashrc
 rm -rf ~/.gitconfig
-rm -rf ~/.hgrc
 rm -rf ~/.screenrc
-rm -rf ~/.tcshrc
-rm -rf ~/.tmux.conf
 rm -rf ~/.vim
 rm -rf ~/.vimrc
 rm -rf ~/.pyrc.py
 rm -rf ~/bin
-rm -rf ~/.ssh/config
+
+cp dkgconf/local/gitconfig.template  dkgconf/local/gitconfig
 
 ln -s dkgconf/local/bashrc      ~/.bashrc
 ln -s dkgconf/local/gitconfig   ~/.gitconfig
-ln -s dkgconf/local/hgrc        ~/.hgrc
 ln -s dkgconf/local/screenrc    ~/.screenrc
-ln -s dkgconf/local/tcshrc      ~/.tcshrc
-ln -s dkgconf/local/tmux.conf   ~/.tmux.conf
 ln -s dkgconf/local/vim         ~/.vim
 ln -s dkgconf/local/vimrc       ~/.vimrc
 ln -s dkgconf/local/pyrc.py     ~/.pyrc.py
 ln -s dkgconf/local/bin         ~/bin
-ln -s ../dkgconf/local/ssh_config ~/.ssh/config
+
+if [ ! -d ~/.vim/bundle/Vundle.vim ]; then
+    echo '============'
+    echo 'Setup Vundle'
+    echo '============'
+    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+    vim -c 'BundleInstall' -c 'q' -c 'q'
+fi
 
 echo '...done'
 

@@ -8,6 +8,7 @@
     co = checkout
     up = checkout
     lg = log --graph
+    ds = diff --staged
 
 # usege: git clone git://host.name/.git name
     serve = daemon \
