@@ -8,68 +8,117 @@
 # Note that PYTHONSTARTUP does *not* expand "~", so you have to put in the
 # full path to your home directory.
 
-import atexit
+from datetime import datetime
+from pprint import pprint
+import base64
+import json
+import math
 import os
-import readline
-import rlcompleter
+import re
 import sys
 
 is_py2 = (sys.version_info.major == 2)
-
-# Change autocomplete to tab
-if readline.__doc__ and 'libedit' in readline.__doc__:
-    # for mac
-    readline.parse_and_bind("bind ^I rl_complete")
-else:
-    readline.parse_and_bind("tab: complete")
-
-
-# If history file exist, source it.
-history_path = os.path.expanduser("~/.pyhistory")
-if os.path.exists(history_path):
-    readline.read_history_file(history_path)
-
-
-# Save history on exit
-def save_history(history_path=history_path):
-    import readline
-    readline.write_history_file(history_path)
-atexit.register(save_history)
-
-
-# Stop saving history feature. Use it if you want to test something sensitive.
-# Set atexit, save_history in arguments in order not to be deleted later.
-def stop_saving_history(atexit=atexit, save_history=save_history):
-    atexit.unregister(save_history)
-
-
-# If ~/.pylocal.py exist, source it.
-pylocal_path = os.path.expanduser("~/.pylocal.py")
-if os.path.exists(pylocal_path):
-    print("exec '.pylocal.py'  ...")
-    if is_py2:
-        execfile(pylocal_path)
-    else:
-        exec(compile(open(pylocal_path).read(), pylocal_path, 'exec'))
-
-
-# Anything not deleted (sys and os) will remain in the interpreter session
-del atexit, readline, rlcompleter, save_history, history_path, pylocal_path
-
-
-# Useful libs import for you
-from datetime import datetime
-import itertools
-import json
-import math
-import re
-import shlex
-import subprocess
 
 if is_py2:
     import urllib, urllib2
 else:
     import urllib.request, urllib.parse
+
+
+def init():
+    '''Mods, functions here will not remain in the interpreter session.'''
+    import atexit
+    import readline
+    import rlcompleter
+
+    # Change autocomplete to tab
+    if readline.__doc__ and 'libedit' in readline.__doc__:
+        # for mac
+        readline.parse_and_bind("bind ^I rl_complete")
+    else:
+        readline.parse_and_bind("tab: complete")
+
+    # If history file exist, source it.
+    history_path = os.path.expanduser("~/.pyhistory")
+    if os.path.exists(history_path):
+        readline.read_history_file(history_path)
+
+    # Save history on exit
+    def save_history(history_path=history_path):
+        readline.write_history_file(history_path)
+    atexit.register(save_history)
+
+    # Stop saving history feature. Use it if you want to test something sensitive.
+    # Make it global so it will remain in the interpreter session.
+    # TODO: not working in Python2.
+    global stop_saving_history
+    def stop_saving_history():
+        atexit.unregister(save_history)
+
+    # If ~/.pylocal.py exist, source it.
+    pylocal_path = os.path.expanduser("~/.pylocal.py")
+    if os.path.exists(pylocal_path):
+        print("\033[1;32mexec '.pylocal.py'  ...\033[m")
+        if is_py2:
+            execfile(pylocal_path)
+        else:
+            exec(compile(open(pylocal_path).read(), pylocal_path, 'exec'))
+
+
+# Call init() later because .pylocal.py may want to use functions below.
+
+def try_import(mod_name, func=None, alias=None):
+    ''' Helper function for you to write .pylocal.py
+
+    Examples:
+
+        # import requests
+        try_import('requests')
+
+        # import itertools as it
+        try_import('itertools', alias='it')
+
+        # from unittest.mock import Mock
+        try_import('unittest.mock', 'Mock')
+
+        # from datetime import timedelta as td
+        try_import('datetime', 'timedelta', 'td')
+
+    Return Value:
+        True                If success.
+        False, exception    If failed, and exception for debug purpose.
+
+    Bugs:
+        This is not working because the full_name contains '.':
+            try_import('os.path')
+        You should give it an alias:
+            try_import('os.path', alias='path')
+    '''
+    import importlib
+
+    try:
+        target = importlib.import_module(mod_name)
+    except ImportError as e:
+        return False, e
+
+    if func:
+        try:
+            target = getattr(target, func)
+        except AttributeError as e:
+            return False, e
+        full_name = mod_name + '.' + func
+    else:
+        full_name = mod_name
+
+    if not alias:
+        alias = func if func else mod_name
+
+    globals()[alias] = target
+    print('{magenta}[{full_name}]{clr} is imported as {cyan}[{alias}]{clr}'
+          .format(magenta='\033[1;35m', cyan='\033[1;36m', clr='\033[m',
+                  full_name=full_name, alias=alias))
+    return True
+
 
 def openurl(url, params={}, method="GET"):
     """open the url
@@ -92,19 +141,20 @@ def openurl(url, params={}, method="GET"):
         urlopen = urllib.request.urlopen
         urlencode = urllib.parse.urlencode
 
-    if method == "POST":
+    if method.upper() == "POST":
         return urlopen(url, data=urlencode(params))
     else:
         return urlopen(url + "?" + urlencode(params))
 
 
 def S(cmd, input=None, **kwargs):
-    """Shortcut for subprocess.Popen. Intent to simulate backquote.
+    """Shortcut for subprocess.Popen. Intent to simulate backquote is shell.
     cmd: list or str
     input: str or bytes
     **kwargs: same as subprocess.Popen
     return value: str of stdout and stderr
     """
+    import subprocess
     # default arguments
     popen_args = dict(
         stdin = subprocess.PIPE,
@@ -127,3 +177,6 @@ def S(cmd, input=None, **kwargs):
     ret = (out[0] if out[0] else b'') + (out[1] if out[1] else b'')
     return ret.decode()
 
+
+init()
+del init
