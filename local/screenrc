@@ -48,6 +48,8 @@ bindkey ^[[5D prev      # for mac terminal alt+arrow
 bindkey ^[[5C next
 bindkey \033[1;9D prev  # for mac iTerm alt+arrow
 bindkey \033[1;9C next
+bindkey \033\033[D prev # for mac_10.12 with iTerm2_3.0 alt+arrow
+bindkey \033\033[C next
 bindkey \033[1;5D prev  # for cygwin terminal ctrl+arrow
 bindkey \033[1;5C next
 
