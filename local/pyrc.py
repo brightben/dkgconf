@@ -76,8 +76,11 @@ def try_import(mod_name, func=None, alias=None):
         # from datetime import timedelta as td
         try_import('datetime', 'timedelta', 'td')
 
+        # detect if import succesfully.
+        if try_import('boto3')[0]: print('boto3 is imported')
+
     Return Value:
-        True                If success.
+        True, None          If success.
         False, exception    If failed, and exception for debug purpose.
 
     Bugs:
@@ -109,7 +112,7 @@ def try_import(mod_name, func=None, alias=None):
     print('{magenta}[{full_name}]{clr} is imported as {cyan}[{alias}]{clr}'
           .format(magenta='\033[1;35m', cyan='\033[1;36m', clr='\033[m',
                   full_name=full_name, alias=alias))
-    return True
+    return True, None
 
 
 def openurl(url, params={}, method="GET"):
