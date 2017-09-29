@@ -74,6 +74,7 @@ shelltitle '% |-'
 defscrollback 10000
 #cjkwidth off
 
+term screen-256color
 
 # ==================== Non-use Settings Backup  ===================={{{1
 # Colours
